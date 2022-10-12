@@ -39,7 +39,7 @@
     },
     "PurviewClientSecret": {
       "defaultValue": "",
-      "type": "String"
+      "type": "securestring"
     },
     "PurviewAccountResourceGroup": {
       "defaultValue": "",
@@ -150,7 +150,7 @@
     },
     "HttpsCertificatePrivateKey": {
       "defaultValue": "",
-      "type": "String"
+      "type": "securestring"
     },
     "UseLetsEncrypt": {
       "type": "String"
