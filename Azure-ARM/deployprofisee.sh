@@ -33,7 +33,6 @@ printenv;
 
 #Get AKS credentials, this allows us to use kubectl commands, if needed.
 az aks get-credentials --resource-group $RESOURCEGROUPNAME --name $CLUSTERNAME --overwrite-existing;
-
 #Install dotnet core.
 echo $"Installation of dotnet core started.";
 curl -fsSL -o dotnet-install.sh https://dot.net/v1/dotnet-install.sh
@@ -549,5 +548,9 @@ echo $result
 
 kubectl delete secret profisee-deploymentlog -n profisee --ignore-not-found
 kubectl create secret generic profisee-deploymentlog -n profisee --from-file=$logfile
+
+if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
+	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
+	az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
 
 echo $result > $AZ_SCRIPTS_OUTPUT_PATH

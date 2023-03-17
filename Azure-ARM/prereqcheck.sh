@@ -20,6 +20,8 @@ fi
 
 success='false'
 
+
+
 function set_resultAndReturn () {
 	result="{\"Result\":[\
 	{\"SUCCESS\":\"$success\"},

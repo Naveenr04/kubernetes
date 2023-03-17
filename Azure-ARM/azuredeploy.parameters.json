@@ -137,6 +137,9 @@
         },
         "KubenetesInfrastructureResourceGroupName": {
             "value": ""
-        }
+        },
+        "AuthenticationType":{
+            "value": ""
+        }         
     }
 }
