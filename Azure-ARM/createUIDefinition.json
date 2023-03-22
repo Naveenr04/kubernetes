@@ -981,6 +981,7 @@
       "KubernetesLinuxNodeCount": "[steps('kubernetes').KubernetesLinuxNodeCount]",
       "KubernetesWindowsNodeSize": "[steps('kubernetes').KubernetesWindowsNodeSizeSection.KubernetesWindowsNodeSize]",
       "KubernetesWindowsNodeCount": "[steps('kubernetes').KubernetesWindowsNodeCount]",
+      "AuthenticationType": "[steps('kubernetes').AuthenticationType]",
       "KubernetesVnetName": "[steps('kubernetes').KubernetesAdvanced.KubernetesVnetName.name]",
       "KubernetesVnetResourceGroup": "[steps('kubernetes').KubernetesAdvanced.KubernetesVnetName.resourceGroup]",
       "KubernetesSubnetName": "[steps('kubernetes').KubernetesAdvanced.KubernetesVnetName.subnets.subnet1.name]",
