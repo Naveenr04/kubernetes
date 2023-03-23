@@ -463,6 +463,14 @@ else
 	sed -i -e 's/$USEKEYVAULT/'false'/g' Settings.yaml
 fi
 
+echo $"AuthenticationType is $AUTHENTICATIONTYPE";
+echo $"Resourcegroup is $RESOURCEGROUPNAME";
+echo $"clustername is $CLUSTERNAME";
+if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
+	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
+	az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
+fi;
+
 if [ "$USELETSENCRYPT" = "Yes" ]; then
 	#################################Lets Encrypt Start #####################################
 	# Label the namespace to disable resource validation
@@ -529,13 +537,7 @@ sleep 30;
 kubectl wait --timeout=1800s --for=condition=ready pod/profisee-0 -n profisee
 
 echo $"Profisee deploymented finished $(date +"%Y-%m-%d %T")";
-echo $"AuthenticationType is $AUTHENTICATIONTYPE";
-echo $"Resourcegroup is $RESOURCEGROUPNAME";
-echo $"clustername is $CLUSTERNAME";
-if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
-	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
-	az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
-fi;
+
 
 result="{\"Result\":[\
 {\"IP\":\"$nginxip\"},\
