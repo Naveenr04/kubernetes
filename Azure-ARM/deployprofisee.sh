@@ -33,6 +33,7 @@ printenv;
 
 #Get AKS credentials, this allows us to use kubectl commands, if needed.
 az aks get-credentials --resource-group $RESOURCEGROUPNAME --name $CLUSTERNAME --overwrite-existing;
+
 #Install dotnet core.
 echo $"Installation of dotnet core started.";
 curl -fsSL -o dotnet-install.sh https://dot.net/v1/dotnet-install.sh
@@ -74,11 +75,6 @@ fi
 echo $"EXTERNALDNSURL is $EXTERNALDNSURL";
 echo $"EXTERNALDNSNAME is $EXTERNALDNSNAME";
 echo $"DNSHOSTNAME is $DNSHOSTNAME";
-# Auth=$(echo $AUTHENTICATIONTYPE|tr -d)
-# AuthType="${AUTHENTICATIONTYPE,,}"
-echo $"AuthenticationType is $AUTHENTICATIONTYPE";
-# echo $"Auth is $Auth";
-# echo $"AuthType is $AuthType";
 
 #If ACR credentials are passed in via legacy script, use those. Otherwise, pull ACR credentials from license.
 if [ "$ACRUSER" = "" ]; then
@@ -305,7 +301,7 @@ echo $"Correction of TLS variables finished.";
 #Installation of Profisee platform
 echo $"Installation of Profisee platform statrted.";
 #Configure Profisee helm chart settings
-auth="$(echo -n "$ACRUSER:$ACRUSERPASSWORD" | base64 )"
+auth="$(echo -n "$ACRUSER:$ACRUSERPASSWORD" | base64 -w0)"
 sed -i -e 's/$ACRUSER/'"$ACRUSER"'/g' Settings.yaml
 sed -i -e 's/$ACRPASSWORD/'"$ACRUSERPASSWORD"'/g' Settings.yaml
 sed -i -e 's/$ACREMAIL/'"support@profisee.com"'/g' Settings.yaml
@@ -329,7 +325,7 @@ if [ "$UPDATEAAD" = "Yes" ]; then
 	echo $"azureAppReplyUrl is $azureAppReplyUrl";
 
 	echo "Creation of the Azure Active Directory application registration started."
-	CLIENTID=$(az ad app create --display-name $azureClientName --reply-urls $azureAppReplyUrl --query 'appId' -o tsv);
+	CLIENTID=$(az ad app create --display-name $azureClientName --web-redirect-uris $azureAppReplyUrl --enable-id-token-issuance --query 'appId' -o tsv);
 	echo $"CLIENTID is $CLIENTID";
 	if [ -z "$CLIENTID" ]; then
 		echo $"CLIENTID is null fetching";
@@ -356,7 +352,7 @@ if [ "$UPDATEAAD" = "Yes" ]; then
 	        echo "Update of the application registration's permissions, step 1 finished."
 
 	        echo "Update of the application registration's permissions, step 2 started."
-	        az ad app permission grant --id $CLIENTID --api 00000003-0000-0000-c000-000000000000
+	        az ad app permission grant --id $CLIENTID --api 00000003-0000-0000-c000-000000000000 --scope User.Read
 	        echo "Update of the application registration's permissions, step 2 finished."
 	        echo "Update of Azure Active Directory finished.";
 	fi
@@ -533,7 +529,6 @@ sleep 30;
 kubectl wait --timeout=1800s --for=condition=ready pod/profisee-0 -n profisee
 
 echo $"Profisee deploymented finished $(date +"%Y-%m-%d %T")";
-
 
 result="{\"Result\":[\
 {\"IP\":\"$nginxip\"},\
