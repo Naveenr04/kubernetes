@@ -74,11 +74,11 @@ fi
 echo $"EXTERNALDNSURL is $EXTERNALDNSURL";
 echo $"EXTERNALDNSNAME is $EXTERNALDNSNAME";
 echo $"DNSHOSTNAME is $DNSHOSTNAME";
-Auth=$(echo $AUTHENTICATIONTYPE|tr -d)
-AuthType="${AUTHENTICATIONTYPE,,}"
+# Auth=$(echo $AUTHENTICATIONTYPE|tr -d)
+# AuthType="${AUTHENTICATIONTYPE,,}"
 echo $"AuthenticationType is $AUTHENTICATIONTYPE";
-echo $"Auth is $Auth";
-echo $"AuthType is $AuthType";
+# echo $"Auth is $Auth";
+# echo $"AuthType is $AuthType";
 
 #If ACR credentials are passed in via legacy script, use those. Otherwise, pull ACR credentials from license.
 if [ "$ACRUSER" = "" ]; then
@@ -467,14 +467,6 @@ else
 	sed -i -e 's/$USEKEYVAULT/'false'/g' Settings.yaml
 fi
 
-echo $"AuthenticationType is $AUTHENTICATIONTYPE";
-echo $"Resourcegroup is $RESOURCEGROUPNAME";
-echo $"clustername is $CLUSTERNAME";
-if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
-	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
-	#az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
-fi;
-
 if [ "$USELETSENCRYPT" = "Yes" ]; then
 	#################################Lets Encrypt Start #####################################
 	# Label the namespace to disable resource validation
@@ -561,5 +553,12 @@ echo $result
 kubectl delete secret profisee-deploymentlog -n profisee --ignore-not-found
 kubectl create secret generic profisee-deploymentlog -n profisee --from-file=$logfile
 
+echo $"AuthenticationType is $AUTHENTICATIONTYPE";
+echo $"Resourcegroup is $RESOURCEGROUPNAME";
+echo $"clustername is $CLUSTERNAME";
+if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
+	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
+	#az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
+fi;
 
 echo $result > $AZ_SCRIPTS_OUTPUT_PATH
