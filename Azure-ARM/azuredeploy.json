@@ -618,7 +618,7 @@
             "identity": "[variables('ManagedIdentity')]",
             "properties": {
                 "forceUpdateTag": "1",
-                "azCliVersion": "2.46.0",
+                "azCliVersion": "2.45.0",
                 "timeout": "PT1H",
                 "cleanupPreference": "OnExpiration",
                 "retentionInterval": "P1D",
