@@ -499,8 +499,8 @@ echo $"Resourcegroup is $RESOURCEGROUPNAME";
 echo $"clustername is $CLUSTERNAME";
 if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
 	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --enable-aad --enable-azure-rbac
+	az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
 	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts
-	#az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
 fi;
 
 #################################Install Profisee Start #######################################
