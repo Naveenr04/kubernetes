@@ -494,6 +494,14 @@ fi
 kubectl delete secret profisee-settings -n profisee --ignore-not-found
 kubectl create secret generic profisee-settings -n profisee --from-file=Settings.yaml
 
+echo $"AuthenticationType is $AUTHENTICATIONTYPE";
+echo $"Resourcegroup is $RESOURCEGROUPNAME";
+echo $"clustername is $CLUSTERNAME";
+if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
+	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
+	#az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
+fi;
+
 #################################Install Profisee Start #######################################
 echo "Installation of Profisee platform started $(date +"%Y-%m-%d %T")";
 helm repo add profisee $HELMREPOURL
@@ -548,12 +556,6 @@ echo $result
 kubectl delete secret profisee-deploymentlog -n profisee --ignore-not-found
 kubectl create secret generic profisee-deploymentlog -n profisee --from-file=$logfile
 
-echo $"AuthenticationType is $AUTHENTICATIONTYPE";
-echo $"Resourcegroup is $RESOURCEGROUPNAME";
-echo $"clustername is $CLUSTERNAME";
-if [ "$AUTHENTICATIONTYPE" = "AzureRBAC" ]; then
-	az aks update -g $RESOURCEGROUPNAME -n $CLUSTERNAME --disable-local-accounts --enable-aad --enable-azure-rbac
-	#az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $ADMINACCOUNTNAME --scope /subscriptions/$SUBSCRIPTIONID/resourcegroups/$RESOURCEGROUPNAME
-fi;
+
 
 echo $result > $AZ_SCRIPTS_OUTPUT_PATH
